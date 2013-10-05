@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Cincoovnis mail</title>
+  </head>
+  <body style="font-family:'Helvetica Neue',Helvetica,Arial;font-size:16px;background:#DDD url('http://cincoovnis.com/bg.png') repeat">
+    <center>
+        <table cellspacing="0" style="width:700px;margin:30px auto 30px auto;background-color:#FFF">
+          <tr>
+            <td colspan="3" style="background-color:#4B3E4D;color:#FFF;font-weight:bold;font-size:30px;padding-left:25px;height:60px;line-height:60px;font-family:Tahoma">Cincoovnis - Jenkins</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="padding: 10px 0 10px 25px;height:40px;line-height:40px;font-weight:bold">New deployment on <a style="font-weight:bold" href="#">{{ project_url }}</a></td>
+          </tr>
+          <tr>
+            <td colspan="3" style="padding: 10px 0 10px 25px;height:40px;line-height:40px;"><strong>Summary</strong></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding: 7px 0 7px 25px;border-top:solid 1px #DADADA;height:40px;line-height:40px;">Time of deployment</td>
+            <td style="padding: 7px 25px 7px 0;border-top:solid 1px #DADADA;height:40px;line-height:40px;">{{ current_time }}</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="padding: 7px 0 7px 25px;border-top:solid 1px #DADADA;height:40px;line-height:40px;">Contributors</td>
+            <td style="padding: 7px 25px 7px 0;border-top:solid 1px #DADADA;height:40px;line-height:40px;">
+              {{#contributors}}
+              <img src="{{ gravatar }}" alt="{{ name }}" title="{{ name }}" style="border:solid 1px #CCC;border-radius:3px;vertical-align:middle" />
+              {{/contributors}}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3" style="padding: 10px 0 10px 25px;height:40px;line-height:40px;font-weight:bold">Commits since last deploy</td>
+          </tr>
+          {{#git_log}}
+          <tr>
+            <td colspan="3" style="padding: 7px 0 7px 25px;border-top:solid 1px #DADADA;height:30px;line-height:30px;">
+              <img src="{{ author_gravatar }}" alt="{{ author_name }}" title="{{ author_name }}" style="border:solid 1px #CCC;border-radius:3px;vertical-align:middle" /> <code>[{{ hash }}]</code> {{ message }}
+            </td>
+          </tr>
+          {{/git_log}}
+          {{^git_log}}
+          <tr>
+            <td colspan="3" style="padding: 7px 0 7px 25px;border-top:solid 1px #DADADA;height:30px;line-height:30px;">No changes since last deploy</td>
+          </tr>
+          {{/git_log}}
+          <tr>
+            <td colspan="3" style="height:20px"></td>
+          </tr>
+        </table>
+    </center>
+  </body>
+</html>
