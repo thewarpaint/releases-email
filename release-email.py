@@ -15,7 +15,7 @@ with open(TEMPLATE_FILE, 'r') as f:
     tpl = f.read().decode('utf-8')
 
 
-# Contributors
+# Gravatar URL generation
 def gravatar_url(email):
     gravatar_hash = hashlib.md5(email.strip().lower().encode('utf-8')).hexdigest()
     return u"http://www.gravatar.com/avatar/%s?s=32" % gravatar_hash
@@ -32,7 +32,7 @@ release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
 raw_git_log = subprocess.check_output(
     ['git', 'log', '--pretty=%h}%s}%an}%ae', '--since=`date -r ./../lastSuccessful/build.xml "+%F %T"`']).decode('utf-8')
 
-tokenized_git_log = [line.split(u"}") for line in raw_git_log.strip().split(u"\n")]
+tokenized_git_log = [line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
 
 release_data['git_log'] = [
     {
