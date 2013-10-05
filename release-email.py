@@ -30,7 +30,7 @@ release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
 
 # Release changelog
 raw_git_log = subprocess.check_output(
-    ['git', 'log', '--pretty=%h}%s}%an}%ae', '--since=1 week ago']).decode('utf-8')
+    ['git', 'log', '--pretty=%h}%s}%an}%ae', '--since=`date -r ./../lastSuccessful/build.xml "+%F %T"`']).decode('utf-8')
 
 tokenized_git_log = [line.split(u"}") for line in raw_git_log.strip().split(u"\n")]
 
