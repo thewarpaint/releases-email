@@ -31,7 +31,7 @@ release_data = dict()
 
 
 # Basic release info
-release_data['project_url'] = sys.argv[1]
+release_data['project_url'] = project_url
 release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
 
 
