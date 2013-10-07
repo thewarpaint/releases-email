@@ -6,8 +6,15 @@ from os.path import dirname, realpath
 import subprocess
 from datetime import datetime
 import hashlib
+from jenkinsapi.jenkins import Jenkins
 
 import pystache
+
+
+jenkins_url = sys.argv[1]
+project_url = sys.argv[2]
+job_name = sys.argv[3]
+
 
 # Simple HTML mail template
 TEMPLATE_FILE = os.path.join(dirname(realpath(__file__)), 'mail-template.html')
@@ -29,8 +36,10 @@ release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
 
 
 # Release changelog
+jenkins = Jenkins(jenkins_url)
+since = jenkins[job_name].get_last_good_build().get_revision()
 raw_git_log = subprocess.check_output(
-    ['git', 'log', '--pretty=%h}%s}%an}%ae', '--since=`cat ./../lastSuccessful/changelog.xml | grep "commit " | cut -d " " -f 2 | head -n 1`']).decode('utf-8')
+    ['git', 'log', '--pretty=%h}%s}%an}%ae', '--since=%s' % since]).decode('utf-8')
 
 tokenized_git_log = [line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
 
