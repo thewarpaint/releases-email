@@ -39,7 +39,7 @@ release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
 jenkins = Jenkins(jenkins_url)
 since = jenkins[job_name].get_last_good_build().get_revision()
 raw_git_log = subprocess.check_output(
-    ['git', 'log', '--pretty=%h}%s}%an}%ae', '--since=%s' % since]).decode('utf-8')
+    ['git', 'log', '--pretty=%h}%s}%an}%ae', '%s..' % since]).decode('utf-8')
 
 tokenized_git_log = [line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
 
