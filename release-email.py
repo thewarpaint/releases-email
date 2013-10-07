@@ -25,7 +25,7 @@ with open(TEMPLATE_FILE, 'r') as f:
 # Gravatar URL generation
 def gravatar_url(email):
     gravatar_hash = hashlib.md5(email.strip().lower().encode('utf-8')).hexdigest()
-    return u"http://www.gravatar.com/avatar/%s?s=32" % gravatar_hash
+    return u"http://www.gravatar.com/avatar/%s?s=40" % gravatar_hash
 
 release_data = dict()
 

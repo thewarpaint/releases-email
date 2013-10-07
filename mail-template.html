@@ -8,13 +8,16 @@
     <center>
         <table cellspacing="0" style="width:700px;margin:30px auto 30px auto;background-color:#FFF">
           <tr>
-            <td colspan="3" style="background-color:#4B3E4D;color:#FFF;font-weight:bold;font-size:30px;padding-left:25px;height:60px;line-height:60px;font-family:Tahoma">Cincoovnis - Jenkins</td>
+              <td colspan="3" style="background-color:#D74F33;color:#FFF;font-weight:bold;font-size:35px;padding-left:25px;height:84px;line-height:84px;font-family:Tahoma">
+                  <img style="vertical-align:middle" src="http://cincoovnis.com/ufo.png" alt="Cincoovnis"/>
+                  Jenkins
+              </td>
           </tr>
           <tr>
-            <td colspan="3" style="padding: 10px 0 10px 25px;height:40px;line-height:40px;font-weight:bold">New deployment on <a style="font-weight:bold" href="#">{{ project_url }}</a></td>
+            <td colspan="3" style="padding: 10px 0 10px 25px;height:40px;line-height:40px;font-size:20px;font-weight:bold;text-align:center">New deployment on <a style="color:#D74F33" href="#">{{ project_url }}</a></td>
           </tr>
           <tr>
-            <td colspan="3" style="padding: 10px 0 10px 25px;height:40px;line-height:40px;"><strong>Summary</strong></td>
+              <td colspan="3" style="padding: 0 0 10px 25px;height:30px;line-height:30px;"><strong>Summary</strong></td>
           </tr>
           <tr>
             <td colspan="2" style="padding: 7px 0 7px 25px;border-top:solid 1px #DADADA;height:40px;line-height:40px;">Time of deployment</td>
@@ -25,6 +28,9 @@
             <td style="padding: 7px 25px 7px 0;border-top:solid 1px #DADADA;height:40px;line-height:40px;">
               {{#contributors}}
               <img src="{{ gravatar }}" alt="{{ name }}" title="{{ name }}" style="border:solid 1px #CCC;border-radius:3px;vertical-align:middle" />
+              {{/contributors}}
+              {{^contributors}}
+              No changes since last deploy
               {{/contributors}}
             </td>
           </tr>
@@ -43,6 +49,14 @@
             <td colspan="3" style="padding: 7px 0 7px 25px;border-top:solid 1px #DADADA;height:30px;line-height:30px;">No changes since last deploy</td>
           </tr>
           {{/git_log}}
+          <tr>
+            <td colspan="3" style="border-top:solid 1px #DADADA;height:20px"></td>
+          </tr>
+          <tr>
+              <td colspan="3" style="text-align: center;height: 40px;line-height: 40px;color:#C6C6C6">
+                  Visit <a href="http://cincoovnis.com" style="color:#D74F33">http://cincoovnis.com</a>
+              </td>
+          </tr>
           <tr>
             <td colspan="3" style="height:20px"></td>
           </tr>
