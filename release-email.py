@@ -63,7 +63,7 @@ release_data['contributors'] = [
     for name, email, gravatar in contributors]
 
 # Headers
-print u"Subject: New deploy on %s" % release_data['project_url']
+print u"Subject: New deployment to %s" % release_data['project_url']
 print u"MIME-Version: 1.0"
 print u"Content-Type: text/html"
 print u"Content-Disposition: inline"
