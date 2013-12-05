@@ -82,6 +82,8 @@ for entry in release_data['git_log']:
         task_ids.update(labels['md'].split(','))
 
 release_data['tasks'] = md.get_tasks(task_ids)
+for task in release_data['tasks']:
+    task['status'] = '+' if task['isActive'] else '.'
 
 # Headers
 print u"Subject: New deployment to %s" % release_data['project_url']
