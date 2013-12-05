@@ -6,7 +6,7 @@ from os.path import dirname, realpath
 import subprocess
 from datetime import datetime
 import hashlib
-from gitlabels import get_labels
+from gitlabels import get_labels, remove_labels
 from manoderecha.manoderecha import Manoderecha
 
 from jenkinsapi.jenkins import Jenkins
@@ -74,6 +74,10 @@ md = Manoderecha(MANODERECHA_USER, MANODERECHA_PASSWORD)
 task_ids = set()
 for entry in release_data['git_log']:
     labels = get_labels(entry['message'])
+
+    entry['labels'] = ["%s:%s" % (k, v) for k, v in labels.items()]
+    entry['message'] = remove_labels(entry['message'])
+
     if 'md' in labels:
         task_ids.update(labels['md'].split(','))
 

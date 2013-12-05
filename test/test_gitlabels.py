@@ -1,4 +1,4 @@
-from gitlabels import get_labels
+from gitlabels import get_labels, remove_labels
 
 def test_gets_alphanumeric_labels():
     message = u"(one two three3) A test message"
@@ -26,3 +26,22 @@ def test_returns_arguments_for_labels_with_it():
 
     assert labels['md'] == '1864'
     assert labels['xy'] == '123:125'
+
+def test_can_remove_labels():
+    labeled_messages = [
+        "(one two three) Message",
+        "(one) Message",
+    ]
+    for message in labeled_messages:
+        assert remove_labels(message) == 'Message'
+
+    assert remove_labels('(abc) Two sets (def ghi)') == "Two sets (def ghi)"
+
+def test_leaves_unlabeled_untouched():
+    unlabeled_messages = [
+        "A simple message",
+        "() No real labels",
+        "Misplaced (abc def ghi) labels",
+    ]
+    for message in unlabeled_messages:
+        assert remove_labels(message) == message.strip()

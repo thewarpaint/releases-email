@@ -70,7 +70,10 @@
                   <img style="border:1px solid #cccccc; border-radius:1px;" src="{{ author_gravatar }}" alt="{{ author_name }}" title="{{ author_name }}">
                 </td>
                 <td width="75" style="border-bottom: 1px solid #DADADA;"><code>[{{ hash }}]</code></td>
-                <td width="550" style="border-bottom: 1px solid #DADADA;">{{ message }}</td>
+                <td width="540" style="border-bottom: 1px solid #DADADA;padding-left:10px">
+                    <p style="margin-bottom:10px;">{{ message }}</p>
+                    {{#labels}}<span style="background-color:#e9e2e2;border-radius:3px;padding:3px;font-size:80%;min-width:3em;">{{.}}</span>{{/labels}}
+                </td>
                 <td style="width:25px"></td>
               </tr>
               {{/git_log}}
