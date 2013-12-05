@@ -30,3 +30,6 @@ class Manoderecha(object):
 
     def get_task(self, task_id):
         return self.call('tasks/' + task_id)[1]
+
+    def get_tasks(self, task_ids):
+        return self.call('tasks/' + ','.join(task_ids))[1]

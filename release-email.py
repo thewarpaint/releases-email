@@ -75,7 +75,7 @@ for entry in release_data['git_log']:
     if 'md' in labels:
         task_ids.update(labels['md'].split(','))
 
-release_data['tasks'] = map(lambda id: md.get_task(id), task_ids)
+release_data['tasks'] = md.get_tasks(task_ids)
 
 # Headers
 print u"Subject: New deployment to %s" % release_data['project_url']
