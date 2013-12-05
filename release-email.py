@@ -6,8 +6,10 @@ from os.path import dirname, realpath
 import subprocess
 from datetime import datetime
 import hashlib
-from jenkinsapi.jenkins import Jenkins
+from gitlabels import get_labels
+from manoderecha.manoderecha import Manoderecha
 
+from jenkinsapi.jenkins import Jenkins
 import pystache
 
 
@@ -61,6 +63,19 @@ contributors = set([
 release_data['contributors'] = [
     {'name': name, 'email': email, 'gravatar': gravatar}
     for name, email, gravatar in contributors]
+
+
+# Tasks
+
+md = Manoderecha('jenkins', 'j3nk1ns')
+
+task_ids = set()
+for entry in release_data['git_log']:
+    labels = get_labels(entry['message'])
+    if 'md' in labels:
+        task_ids.update(labels['md'].split(','))
+
+release_data['tasks'] = map(lambda id: md.get_task(id), task_ids)
 
 # Headers
 print u"Subject: New deployment to %s" % release_data['project_url']
