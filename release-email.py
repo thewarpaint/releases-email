@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import sys
-import os.path
+import os
 from os.path import dirname, realpath
 import subprocess
 from datetime import datetime
@@ -16,6 +16,8 @@ import pystache
 jenkins_url = sys.argv[1]
 project_url = sys.argv[2]
 job_name = sys.argv[3]
+MANODERECHA_USER = os.environ['MANODERECHA_USER']
+MANODERECHA_PASSWORD = os.environ['MANODERECHA_PASSWORD']
 
 
 # Simple HTML mail template
@@ -67,7 +69,7 @@ release_data['contributors'] = [
 
 # Tasks
 
-md = Manoderecha('jenkins', 'j3nk1ns')
+md = Manoderecha(MANODERECHA_USER, MANODERECHA_PASSWORD)
 
 task_ids = set()
 for entry in release_data['git_log']:
