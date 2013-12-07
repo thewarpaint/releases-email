@@ -38,6 +38,14 @@ release_data = dict()
 release_data['project_url'] = project_url
 release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
 
+# Nice project URL
+try:
+    schema_del = '://'
+    index = project_url.index(schema_del) + len(schema_del)
+    release_data['nice_project_url'] = release_data['project_url'][index:]
+except:
+    release_data['nice_project_url'] = project_url
+
 
 # Release changelog
 jenkins = Jenkins(jenkins_url)
@@ -86,7 +94,7 @@ for task in release_data['tasks']:
     task['status'] = '+' if task['isActive'] else '.'
 
 # Headers
-print u"Subject: New deployment to %s" % release_data['project_url']
+print u"Subject: New deployment to %s" % release_data['nice_project_url']
 print u"MIME-Version: 1.0"
 print u"Content-Type: text/html"
 print u"Content-Disposition: inline"
