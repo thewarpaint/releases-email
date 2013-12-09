@@ -1,0 +1,4 @@
+-r development.txt
+pytest-cov
+pep8
+pyflakes
