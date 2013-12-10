@@ -28,7 +28,8 @@ with open(TEMPLATE_FILE, 'r') as f:
 
 # Gravatar URL generation
 def gravatar_url(email):
-    gravatar_hash = hashlib.md5(email.strip().lower().encode('utf-8')).hexdigest()
+    normalized_email = email.strip().lower().encode('utf-8')
+    gravatar_hash = hashlib.md5(normalized_email).hexdigest()
     return u"http://www.gravatar.com/avatar/%s?s=40" % gravatar_hash
 
 release_data = dict()
@@ -53,7 +54,8 @@ since = jenkins[job_name].get_last_good_build().get_revision()
 raw_git_log = subprocess.check_output(
     ['git', 'log', '--pretty=%h}%s}%an}%ae', '%s..' % since]).decode('utf-8')
 
-tokenized_git_log = [line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
+tokenized_git_log = [
+    line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
 
 release_data['git_log'] = [
     {
