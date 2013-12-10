@@ -2,13 +2,24 @@
 import mock
 import pytest
 
-from manoderecha import Manoderecha, ManoderechaError
+from manoderecha import Manoderecha, ManoderechaError, ManoderechaAuth
 
 
 @pytest.fixture
 def a_task():
     task_json = u'{"id":67995,"projectId":279,"statusId":7,"responsibleId":265,"petitionerId":68,"priorityId":3,"creatorId":68,"groupId":null,"petitionId":null,"taskSourceId":null,"concept":"Botón de multiple selection en todas las cajas del record browser","creation":"2013-10-03 16:13:41","startDate":null,"deliveryDate":null,"estimatedTime":360,"chargeable":false,"visible":true,"payable":true,"locked":false,"ganttStartDate":"2013-10-17 00:00:00","ganttCompletionDate":"2013-10-17 00:00:00","isActive":false}'
     return mock.Mock(content=task_json, status_code=200)
+
+
+class TestAuth:
+    def test_sets_header_correctly(self):
+        request = mock.Mock(headers = {})
+        auth = ManoderechaAuth('jair', 'j41r')
+        auth(request)
+
+        headers = request.headers
+        assert 'Api-Authorization' in headers
+        assert headers['Authorization'] == headers['Api-Authorization']
 
 
 class TestCall:
