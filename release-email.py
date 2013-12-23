@@ -10,6 +10,7 @@ from gitlabels import get_labels, remove_labels
 from manoderecha.manoderecha import Manoderecha
 
 from jenkinsapi.jenkins import Jenkins
+from jenkinsapi.custom_exceptions import NoBuildData
 import pystache
 
 
@@ -49,10 +50,16 @@ except:
 
 
 # Release changelog
-jenkins = Jenkins(jenkins_url)
-since = jenkins[job_name].get_last_good_build().get_revision()
-raw_git_log = subprocess.check_output(
-    ['git', 'log', '--pretty=%h}%s}%an}%ae', '%s..' % since]).decode('utf-8')
+git_log_command = ['git', 'log', '--pretty=%h}%s}%an}%ae']
+
+try:
+    jenkins = Jenkins(jenkins_url)
+    since = jenkins[job_name].get_last_good_build().get_revision()
+    git_log_command.append('%s..' % since)
+except NoBuildData:
+    pass
+
+raw_git_log = subprocess.check_output(git_log_command).decode('utf-8')
 
 tokenized_git_log = [
     line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
