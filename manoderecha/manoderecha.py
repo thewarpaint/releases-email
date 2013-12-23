@@ -32,9 +32,10 @@ class Manoderecha(object):
         return self.call('tasks/' + task_id)[1]
 
     def get_tasks(self, task_ids):
-        if len(task_ids) > 0:
-            tasks = self.call('tasks/' + ','.join(task_ids))[1] or []
-            if type(tasks) is not list:
-                return [tasks]
-        else:
-            return []
+        task_ids = map(str, task_ids)
+        tasks = task_ids and self.call('tasks/' + ','.join(task_ids))[1] or []
+
+        if type(tasks) is not list:
+            tasks = [tasks]
+
+        return tasks
