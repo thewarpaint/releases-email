@@ -17,9 +17,10 @@ def a_task():
 
 
 def make_some_tasks(length):
-    tasks_json = u"[%s]" % ",".join(
+    envelope = u"%s" if length==1 else u"[%s]"
+    tasks_json = envelope % ",".join(
         make_task_json(id) for id in xrange(1, length + 1))
-    return mock.Mock(content=tasks_json, status_code=200)
+    return mock.Mock(content=tasks_json, status_code=200 if length > 0 else 404)
 
 
 class TestAuth:
