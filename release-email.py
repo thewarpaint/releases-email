@@ -2,6 +2,7 @@
 # encoding: utf-8
 import sys
 import os
+from urlparse import urlparse
 from os.path import dirname, realpath
 import subprocess
 from datetime import datetime
@@ -32,15 +33,7 @@ release_data = dict()
 # Basic release info
 release_data['project_url'] = project_url
 release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
-
-# Nice project URL
-try:
-    schema_del = '://'
-    index = project_url.index(schema_del) + len(schema_del)
-    release_data['nice_project_url'] = release_data['project_url'][index:]
-except:
-    release_data['nice_project_url'] = project_url
-
+release_data['nice_project_url'] = "".join(urlparse(release_data['project_url'])[1:])
 
 # Release changelog
 def gravatar_hash(email):
