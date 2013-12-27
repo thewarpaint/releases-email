@@ -26,13 +26,6 @@ TEMPLATE_FILE = os.path.join(dirname(realpath(__file__)), 'mail-template.html')
 with open(TEMPLATE_FILE, 'r') as f:
     tpl = f.read().decode('utf-8')
 
-
-# Gravatar URL generation
-def gravatar_url(email):
-    normalized_email = email.strip().lower().encode('utf-8')
-    gravatar_hash = hashlib.md5(normalized_email).hexdigest()
-    return u"http://www.gravatar.com/avatar/%s?s=40" % gravatar_hash
-
 release_data = dict()
 
 
@@ -50,6 +43,11 @@ except:
 
 
 # Release changelog
+def gravatar_hash(email):
+    normalized_email = email.strip().lower().encode('utf-8')
+    gravatar_hash = hashlib.md5(normalized_email).hexdigest()
+    return gravatar_hash
+
 git_log_command = ['git', 'log', '--pretty=%h}%s}%an}%ae']
 
 try:
@@ -70,7 +68,7 @@ release_data['git_log'] = [
         'message': entry[1],
         'author_name': entry[2],
         'author_email': entry[3],
-        'author_gravatar': gravatar_url(entry[3])}
+        'author_gravatar': gravatar_hash(entry[3])}
     for entry in tokenized_git_log
     if not entry[1].startswith('Merge')]
 
