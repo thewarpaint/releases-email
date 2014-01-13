@@ -1,6 +1,6 @@
 import re
 
-LABELS_EXPRESSION = re.compile("^\(([A-z0-9\s\-_*+:]+)\)")
+LABELS_EXPRESSION = re.compile("^\((?:([^):,\s]+(?::\"[^)\"]*\"|:[^)\",\s]*)?)(?:[, \\t]+|(?=\))))+\)")
 
 
 def get_labels(message):
