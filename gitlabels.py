@@ -1,3 +1,5 @@
+# We're here parsing the use of “labels” on commit messages.
+# See: http://ell.io/tt$.gitlabels
 import re
 
 LABELS_EXPRESSION = re.compile("^\((?:([^):,\s]+(?::\"[^)\"]*\"|:[^)\",\s]*)?)(?:[, \\t]+|(?=\))))+\)")
