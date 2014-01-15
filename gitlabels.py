@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # We're here parsing the use of “labels” on commit messages.
 # See: http://ell.io/tt$.gitlabels
 import re
@@ -10,9 +12,9 @@ def get_labels(message):
 
     match = LABELS_EXPRESSION.match(message)
     if match:
-        for l in match.group(1).split(' '):
+        for l in re.split("[, \t]+", match.group(0).strip("()")):
             label = l.split(':', 1)
-            labels[label[0]] = label[1] if len(label) > 1 else u''
+            labels[label[0]] = label[1].strip('"') if len(label) > 1 else u''
 
     return labels
 

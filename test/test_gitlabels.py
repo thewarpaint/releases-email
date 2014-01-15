@@ -17,7 +17,7 @@ def test_returns_empty_list_for_non_labeled():
     messages = [
         u"A message without labels",
         u"( A malformed message",
-        u"(invalid chars in labels ~)",
+        u"(another malformed:\"message)",
     ]
     for message in messages:
         labels = get_labels(message)
@@ -25,11 +25,12 @@ def test_returns_empty_list_for_non_labeled():
 
 
 def test_returns_arguments_for_labels_with_it():
-    message = "(md:1864 xy:123:125 false -) A message with an argument"
+    message = "(md:1864 xy:123:125 something:\"false\" -) A message with an argument"
     labels = get_labels(message)
 
     assert labels['md'] == '1864'
     assert labels['xy'] == '123:125'
+    assert labels['something'] == 'false'
 
 
 def test_can_remove_labels():
