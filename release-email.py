@@ -32,10 +32,13 @@ with open(TEMPLATE_FILE, 'r') as f:
 release_data = dict()
 
 
-# Basic release info
-release_data['project_url'] = project_url
-release_data['current_time'] = datetime.now().strftime("%a, %B %d, %Y, %H:%M")
-release_data['nice_project_url'] = "".join(urlparse(release_data['project_url'])[1:])
+def basic_release_info(project_url):
+    return {
+        'project_url': project_url,
+        'current_time': datetime.now().strftime("%a, %B %d, %Y, %H:%M"),
+        'nice_project_url': "".join(urlparse(release_data['project_url'])[1:]),
+    }
+release_data.extend(basic_release_info(project_url))
 
 # Release changelog
 def gravatar_hash(email):
