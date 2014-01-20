@@ -7,14 +7,16 @@ from os.path import dirname, realpath
 import subprocess
 from datetime import datetime
 import hashlib
-from gitlabels import get_labels, remove_labels
-from manoderecha.manoderecha import Manoderecha
 
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.custom_exceptions import NoBuildData
 import pystache
 
+from gitlabels import get_labels, remove_labels
+from manoderecha.manoderecha import Manoderecha
 
+
+# Parameters
 jenkins_url = sys.argv[1]
 project_url = sys.argv[2]
 job_name = sys.argv[3]
@@ -26,7 +28,7 @@ MANODERECHA_PASSWORD = os.environ['MANODERECHA_PASSWORD']
 TEMPLATE_FILE = os.path.join(dirname(realpath(__file__)), 'mail-template.html')
 with open(TEMPLATE_FILE, 'r') as f:
     tpl = f.read().decode('utf-8')
-
+# Rendering context
 release_data = dict()
 
 
