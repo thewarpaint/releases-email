@@ -46,29 +46,34 @@ def gravatar_hash(email):
     gravatar_hash = hashlib.md5(normalized_email).hexdigest()
     return gravatar_hash
 
-git_log_command = ['git', 'log', '--pretty=%h}%s}%an}%ae']
+def get_last_good_revision(jenkins_url):
+    try:
+        jenkins = Jenkins(jenkins_url)
+        return jenkins[job_name].get_last_good_build().get_revision()
+    except NoBuildData:
+        return None
 
-try:
-    jenkins = Jenkins(jenkins_url)
-    since = jenkins[job_name].get_last_good_build().get_revision()
-    git_log_command.append('%s..' % since)
-except NoBuildData:
-    pass
+def get_git_log(since):
+    git_log_command = ['git', 'log', '--pretty=%h}%s}%an}%ae']
+    if since:
+        git_log_command.append('%s..' % since)
+    return subprocess.check_output(git_log_command).decode('utf-8')
 
-raw_git_log = subprocess.check_output(git_log_command).decode('utf-8')
+def tokenize_git_log(raw_log):
+    tokenized = [l.split(u"}") for l in raw_log.strip().split(u"\n") if l]
 
-tokenized_git_log = [
-    line.split(u"}") for line in raw_git_log.strip().split(u"\n") if line]
+    return [
+            {'hash': entry[0],
+            'message': entry[1],
+            'author_name': entry[2],
+            'author_email': entry[3],
+            'author_gravatar': gravatar_hash(entry[3])}
+        for entry in tokenized
+        if not entry[1].startswith('Merge')]
 
-release_data['git_log'] = [
-    {
-        'hash': entry[0],
-        'message': entry[1],
-        'author_name': entry[2],
-        'author_email': entry[3],
-        'author_gravatar': gravatar_hash(entry[3])}
-    for entry in tokenized_git_log
-    if not entry[1].startswith('Merge')]
+since = get_last_good_revision(jenkins_url)
+raw_log = get_git_log(since)
+release_data['git_log'] = tokenize_git_log(raw_log)
 
 
 # Contributors
