@@ -53,7 +53,7 @@ def get_last_good_revision(jenkins_url):
     except NoBuildData:
         return None
 
-def get_git_log(since):
+def get_raw_git_log(since):
     git_log_command = ['git', 'log', '--pretty=%h}%s}%an}%ae']
     if since:
         git_log_command.append('%s..' % since)
@@ -71,9 +71,15 @@ def tokenize_git_log(raw_log):
         for entry in tokenized
         if not entry[1].startswith('Merge')]
 
+def parse_labels(git_log):
+    for entry in git_log:
+        labels = get_labels(entry['message'])
+        entry['labels'] = labels
+        entry['message'] = remove_labels(entry['message'])
+
 since = get_last_good_revision(jenkins_url)
-raw_log = get_git_log(since)
-release_data['git_log'] = tokenize_git_log(raw_log)
+raw_log = get_raw_git_log(since)
+release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
 
 
 # Contributors
@@ -85,23 +91,22 @@ release_data['contributors'] = [
     for name, email, gravatar in contributors]
 
 
-# Tasks
+
+
+def get_tasks(git_log, md):
+    task_ids = set()
+    for entry in git_log:
+        labels = entry['labels']
+        if 'md' in labels:
+            task_ids.update(labels['md'].split(','))
+    tasks = md.get_tasks(task_ids)
+    for task in tasks:
+        task['status'] = '>' if task['isActive'] else '.'
+
+    return tasks
 
 md = Manoderecha(MANODERECHA_USER, MANODERECHA_PASSWORD)
-
-task_ids = set()
-for entry in release_data['git_log']:
-    labels = get_labels(entry['message'])
-
-    entry['labels'] = ["%s:%s" % (k, v) for k, v in labels.items()]
-    entry['message'] = remove_labels(entry['message'])
-
-    if 'md' in labels:
-        task_ids.update(labels['md'].split(','))
-
-release_data['tasks'] = md.get_tasks(task_ids)
-for task in release_data['tasks']:
-    task['status'] = '>' if task['isActive'] else '.'
+release_data['tasks'] = get_tasks(release_data['git_log'], md)
 
 # Headers
 print u"Subject: New deployment to %s" % release_data['nice_project_url']
