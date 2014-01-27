@@ -75,7 +75,10 @@ def parse_labels(git_log):
     for entry in git_log:
         labels = get_labels(entry['message'])
         entry['labels'] = labels
+        entry['pretty_labels'] = sorted(
+            "%s:%s" % (k, v) if v else k for k, v in labels.items())
         entry['message'] = remove_labels(entry['message'])
+
     return git_log
 
 since = get_last_good_revision(jenkins_url)
