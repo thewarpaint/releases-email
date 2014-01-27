@@ -76,6 +76,7 @@ def parse_labels(git_log):
         labels = get_labels(entry['message'])
         entry['labels'] = labels
         entry['message'] = remove_labels(entry['message'])
+    return git_log
 
 since = get_last_good_revision(jenkins_url)
 raw_log = get_raw_git_log(since)
@@ -83,15 +84,15 @@ release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
 
 
 # Contributors
-contributors = set([
-    (entry['author_name'], entry['author_email'], entry['author_gravatar'])
-    for entry in release_data['git_log']])
-release_data['contributors'] = [
-    {'name': name, 'email': email, 'gravatar': gravatar}
-    for name, email, gravatar in contributors]
+def get_contributors(git_log):
+    contributors = set([
+        (entry['author_name'], entry['author_email'], entry['author_gravatar'])
+        for entry in git_log])
+    return [
+        {'name': name, 'email': email, 'gravatar': gravatar}
+        for name, email, gravatar in contributors]
 
-
-
+release_data['contributors'] = get_contributors(release_data['git_log'])
 
 def get_tasks(git_log, md):
     task_ids = set()
