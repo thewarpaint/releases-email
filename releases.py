@@ -135,12 +135,13 @@ def get_contributors(git_log):
         A list of contributors, each a dictionary with fields 'name', 'email'
         and 'gravatar'.
     """
-    contributors = set([
-        (entry['author_name'], entry['author_email'], entry['author_gravatar'])
-        for entry in git_log])
+    contributors = {
+        entry['author_gravatar']: (entry['author_name'], entry['author_email'])
+        for entry in git_log}
+
     return [
-        {'name': name, 'email': email, 'gravatar': gravatar}
-        for name, email, gravatar in contributors]
+        {'name': info[0], 'email': info[1], 'gravatar': gravatar}
+        for gravatar, info in contributors.items()]
 
 
 def get_tasks(git_log, md):
