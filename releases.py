@@ -1,10 +1,10 @@
-import sys
-import os
-from os.path import dirname, realpath
-from datetime import datetime
-from urlparse import urlparse
-import subprocess
+import argparse
 import hashlib
+import os
+import subprocess
+from datetime import datetime
+from os.path import dirname, realpath
+from urlparse import urlparse
 
 import pystache
 from jenkinsapi.jenkins import Jenkins
@@ -193,11 +193,19 @@ def get_minutes(git_log, md):
     return minutes
 
 
+def configure_argparser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('jenkins_url')
+    parser.add_argument('project_url')
+    parser.add_argument('job_name')
+    return parser
+
+
 def run():
     # Parameters
-    jenkins_url = sys.argv[1]
-    project_url = sys.argv[2]
-    job_name = sys.argv[3]
+    parser = configure_argparser()
+    args = parser.parse_args()
+
     MANODERECHA_USER = os.environ['MANODERECHA_USER']
     MANODERECHA_PASSWORD = os.environ['MANODERECHA_PASSWORD']
 
@@ -208,10 +216,10 @@ def run():
         tpl = f.read().decode('utf-8')
 
     # Basic release info
-    release_data = basic_release_info(project_url)
+    release_data = basic_release_info(args.project_url)
 
     # Changelog
-    since = get_last_good_revision(jenkins_url, job_name)
+    since = get_last_good_revision(args.jenkins_url, args.job_name)
     raw_log = get_raw_git_log(since)
     release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
 
