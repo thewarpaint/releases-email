@@ -1,12 +1,17 @@
+import sys
+import os
+from os.path import dirname, realpath
 from datetime import datetime
 from urlparse import urlparse
 import subprocess
 import hashlib
 
+import pystache
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.custom_exceptions import NoBuildData
 
 from gitlabels import get_labels, remove_labels
+from manoderecha.manoderecha import Manoderecha
 
 def basic_release_info(project_url):
     """
@@ -165,3 +170,41 @@ def get_tasks(git_log, md):
         task['status'] = '>' if task['isActive'] else '.'
 
     return tasks
+
+
+def run():
+    # Parameters
+    jenkins_url = sys.argv[1]
+    project_url = sys.argv[2]
+    job_name = sys.argv[3]
+    MANODERECHA_USER = os.environ['MANODERECHA_USER']
+    MANODERECHA_PASSWORD = os.environ['MANODERECHA_PASSWORD']
+
+
+    # Simple HTML mail template
+    TEMPLATE_FILE = os.path.join(dirname(realpath(__file__)), 'mail-template.html')
+    with open(TEMPLATE_FILE, 'r') as f:
+        tpl = f.read().decode('utf-8')
+
+    # Basic release info
+    release_data = basic_release_info(project_url)
+
+    # Changelog
+    since = get_last_good_revision(jenkins_url, job_name)
+    raw_log = get_raw_git_log(since)
+    release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
+
+    # Contributors
+    release_data['contributors'] = get_contributors(release_data['git_log'])
+
+    # Manoderecha
+    md = Manoderecha(MANODERECHA_USER, MANODERECHA_PASSWORD)
+    release_data['tasks'] = get_tasks(release_data['git_log'], md)
+
+    # Headers
+    print u"Subject: New deployment to %s" % release_data['nice_project_url']
+    print u"MIME-Version: 1.0"
+    print u"Content-Type: text/html"
+    print u"Content-Disposition: inline"
+    # Mail content
+    print pystache.render(tpl, release_data).encode('utf-8')
