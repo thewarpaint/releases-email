@@ -198,17 +198,24 @@ def configure_argparser():
     parser.add_argument('jenkins_url', help=u"Jenkins server URL")
     parser.add_argument('job_name', help=u"Jenkins job name")
     parser.add_argument('project_url', help=u"project's URL")
+
+    parser.add_argument('--manoderecha_user', help='manoderecha user for task fetching')
+    parser.add_argument('--manoderecha_password', help='manoderecha password for task fetching')
+
     return parser
+
+
+def patch(config):
+    config.manoderecha_user = config.manoderecha_user or os.environ['MANODERECHA_USER']
+    config.manoderecha_password = config.manoderecha_password or os.environ['MANODERECHA_PASSWORD']
 
 
 def run():
     # Parameters
     parser = configure_argparser()
-    args = parser.parse_args()
+    config = parser.parse_args()
 
-    MANODERECHA_USER = os.environ['MANODERECHA_USER']
-    MANODERECHA_PASSWORD = os.environ['MANODERECHA_PASSWORD']
-
+    patch(config)
 
     # Simple HTML mail template
     TEMPLATE_FILE = os.path.join(dirname(realpath(__file__)), 'mail-template.html')
@@ -216,10 +223,10 @@ def run():
         tpl = f.read().decode('utf-8')
 
     # Basic release info
-    release_data = basic_release_info(args.project_url)
+    release_data = basic_release_info(config.project_url)
 
     # Changelog
-    since = get_last_good_revision(args.jenkins_url, args.job_name)
+    since = get_last_good_revision(config.jenkins_url, config.job_name)
     raw_log = get_raw_git_log(since)
     release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
 
@@ -227,7 +234,7 @@ def run():
     release_data['contributors'] = get_contributors(release_data['git_log'])
 
     # Manoderecha
-    md = Manoderecha(MANODERECHA_USER, MANODERECHA_PASSWORD)
+    md = Manoderecha(config.manoderecha_user, config.manoderecha_password)
     release_data['tasks'] = get_tasks(release_data['git_log'], md)
     release_data['minutes'] = get_minutes(release_data['git_log'], md)
 
