@@ -211,7 +211,7 @@ def patch(config):
 
 
 def run():
-    # Parameters
+    # Configuration
     parser = configure_argparser()
     config = parser.parse_args()
 
@@ -228,15 +228,15 @@ def run():
     # Changelog
     since = get_last_good_revision(config.jenkins_url, config.job_name)
     raw_log = get_raw_git_log(since)
-    release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
+    git_log = release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
 
     # Contributors
-    release_data['contributors'] = get_contributors(release_data['git_log'])
+    release_data['contributors'] = get_contributors(git_log)
 
     # Manoderecha
     md = Manoderecha(config.manoderecha_user, config.manoderecha_password)
-    release_data['tasks'] = get_tasks(release_data['git_log'], md)
-    release_data['minutes'] = get_minutes(release_data['git_log'], md)
+    release_data['tasks'] = get_tasks(git_log, md)
+    release_data['minutes'] = get_minutes(git_log, md)
 
     # Headers
     print u"Subject: New deployment to %s" % release_data['nice_project_url']
