@@ -1,0 +1,3 @@
+-r development.txt
+pytest-cov
+flake8
