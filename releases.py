@@ -195,9 +195,9 @@ def get_minutes(git_log, md):
 
 def configure_argparser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('jenkins_url')
-    parser.add_argument('project_url')
-    parser.add_argument('job_name')
+    parser.add_argument('jenkins_url', help=u"Jenkins server URL")
+    parser.add_argument('job_name', help=u"Jenkins job name")
+    parser.add_argument('project_url', help=u"project's URL")
     return parser
 
 
