@@ -108,6 +108,30 @@
                 <td style="width:25px"></td>
               </tr>
               {{/tasks}}
+
+              <!-- Minutes -->
+              <tr>
+                <td style="width:25px"></td>
+                <td colspan="3" style="padding:20px 0 20px 0; border-bottom:1px solid #DADADA;"><h3 style="margin:0; font-size:18px;">Related minutes</h3></td>
+                <td style="width:25px"></td>
+              </tr>
+              {{#minutes}}
+              <tr>
+                <td style="width:25px"></td>
+                <td width="675" colspan="3" style="border-bottom: 1px solid #DADADA; padding: 10px 0;">
+                  <a href="http://manoderecha.net/md/index.php/minute#/{{ id }}">{{ name }}</a>
+                </td>
+                <td style="width:25px"></td>
+              </tr>
+              {{/minutes}}
+              {{^minutes}}
+              <tr>
+                <td style="width:25px"></td>
+                <td colspan="3" style="border-bottom: 1px solid #DADADA; padding: 20px 0;">No related minutes. To include them use the <span style="background-color:#e9e2e2;border-radius:3px;padding:3px;font-size:80%;margin-left:5px;">minute</span> label in your commit messages.</td>
+                <td style="width:25px"></td>
+              </tr>
+              {{/minutes}}
+
               <tr>
                 <td colspan="5" style="text-align:center; color:#888888; padding: 40px 0;">Visit <a style="color:#D74F33" href="http://cincoovnis.com">http://cincoovnis.com</a></td>
               </tr>

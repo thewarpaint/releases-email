@@ -172,6 +172,27 @@ def get_tasks(git_log, md):
     return tasks
 
 
+def get_minutes(git_log, md):
+    """
+    Gets a list of minutes from the relevant gitlabels.
+
+    Args:
+        git_log: A git log tokenized and label-parsed.
+        md: A manoderecha API client.
+
+    Returns:
+        A list of manoderecha minutes
+    """
+    minute_ids = set()
+    for entry in git_log:
+        labels = entry['labels']
+        if 'minute' in labels:
+            minute_ids.update(labels['minute'].split(','))
+    minutes = md.get_minutes(minute_ids)
+
+    return minutes
+
+
 def run():
     # Parameters
     jenkins_url = sys.argv[1]
@@ -200,6 +221,7 @@ def run():
     # Manoderecha
     md = Manoderecha(MANODERECHA_USER, MANODERECHA_PASSWORD)
     release_data['tasks'] = get_tasks(release_data['git_log'], md)
+    release_data['minutes'] = get_minutes(release_data['git_log'], md)
 
     # Headers
     print u"Subject: New deployment to %s" % release_data['nice_project_url']
