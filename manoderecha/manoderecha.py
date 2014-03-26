@@ -39,3 +39,15 @@ class Manoderecha(object):
             tasks = [tasks]
 
         return tasks
+
+    def get_minute(self, minute_id):
+        return self.call('minutes/' + minute_id)[1]
+
+    def get_minutes(self, minute_ids):
+        minute_ids = map(str, minute_ids)
+        minutes = minute_ids and self.call('minutes/' + ','.join(minute_ids))[1] or []
+
+        if type(minutes) is not list:
+            minutes = [minutes]
+
+        return minutes
