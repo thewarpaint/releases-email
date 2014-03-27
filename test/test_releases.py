@@ -5,7 +5,7 @@ from jenkinsapi.custom_exceptions import NoBuildData
 from releases import (
     basic_release_info, gravatar_hash, get_last_good_revision,
     get_raw_git_log, tokenize_git_log, parse_labels,
-    get_contributors, get_tasks)
+    get_contributors, get_tasks, get_minutes)
 
 
 class TestBasicReleaseInfo:
@@ -157,8 +157,10 @@ class TestGetTasks:
             u"klmno}New message}Sherlock Holmes}sherlock@example.com",
             u"pqrst}(md:456) Final message}John Watson}watson@example.com",
         ))
+
         changelog = tokenize_git_log(raw_git_log)
         changelog = parse_labels(changelog)
+
         md = mock.Mock()
         md.get_tasks.return_value = [{'isActive': True}]
         tasks = get_tasks(changelog, md)
@@ -167,3 +169,25 @@ class TestGetTasks:
         args, kwargs = md.get_tasks.call_args
         task_ids = args[0]
         assert set(['123', '456']) == set(task_ids)
+
+
+class TestGetMinutes:
+    def test_it_gets_minutes_from_manoderecha(self):
+        raw_git_log = "\n".join((
+            u"abcde}Some message}Sherlock Holmes}sherlock@example.com",
+            u"fghij}(minute:123) Other message}John Watson}Watson@example.com",
+            u"klmno}New message}Sherlock Holmes}sherlock@example.com",
+            u"pqrst}(minute:456) Final message}John Watson}watson@example.com",
+        ))
+
+        changelog = tokenize_git_log(raw_git_log)
+        changelog = parse_labels(changelog)
+
+        md = mock.Mock()
+        md.get_minutes.return_value = [{}]
+        minutes = get_minutes(changelog, md)
+        assert minutes == md.get_minutes.return_value
+
+        args, kwargs = md.get_minutes.call_args
+        minute_ids = args[0]
+        assert set(['123', '456']) == set(minute_ids)

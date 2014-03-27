@@ -9,6 +9,10 @@ def make_task_json(id):
     template = u'{"id":%d,"projectId":279,"statusId":7,"responsibleId":265,"petitionerId":68,"priorityId":3,"creatorId":68,"groupId":null,"petitionId":null,"taskSourceId":null,"concept":"Botón de multiple selection en todas las cajas del record browser","creation":"2013-10-03 16:13:41","startDate":null,"deliveryDate":null,"estimatedTime":360,"chargeable":false,"visible":true,"payable":true,"locked":false,"ganttStartDate":"2013-10-17 00:00:00","ganttCompletionDate":"2013-10-17 00:00:00","isActive":false}'
     return template % (id or 1)
 
+def make_minute_json(id):
+    template = u'{"id":%d,"createdAt":"2013-06-19 23:17:42","creatorId":33,"name":"Pythonic minute","projectId":3,"date":"2014-10-29","startTime":1330,"endTime":1400}'
+    return template % (id or 1)
+
 
 @pytest.fixture
 def a_task():
@@ -16,11 +20,24 @@ def a_task():
     return mock.Mock(content=task_json, status_code=200)
 
 
+@pytest.fixture
+def a_minute():
+    minute_json = make_minute_json(1)
+    return mock.Mock(content=minute_json, status_code=200)
+
+
 def make_some_tasks(length):
     envelope = u"%s" if length==1 else u"[%s]"
     tasks_json = envelope % ",".join(
         make_task_json(id) for id in xrange(1, length + 1))
     return mock.Mock(content=tasks_json, status_code=200 if length > 0 else 404)
+
+
+def make_some_minutes(length):
+    envelope = u"%s" if length==1 else u"[%s]"
+    minutes_json = envelope % ",".join(
+        make_minute_json(id) for id in xrange(1, length + 1))
+    return mock.Mock(content=minutes_json, status_code=200 if length > 0 else 404)
 
 
 class TestAuth:
@@ -85,3 +102,37 @@ class TestGetTasks:
 
                 assert len(tasks) == length
                 assert [t['id'] for t in tasks] == range(1, length + 1)
+
+
+class TestGetMinute:
+    def test_gets_minute(self, a_minute):
+        with mock.patch('requests.get') as get:
+            get.return_value = a_minute
+
+            m = Manoderecha('user', 'password')
+            minute = m.get_minute('1')
+
+            # id from a_minute fixture's JSON
+            assert minute['id'] == 1
+
+    def test_return_none_if_minute_doesnt_exist(self):
+        with mock.patch('requests.get') as get:
+            get.return_value = mock.Mock(status_code=404, content="Blah")
+
+            m = Manoderecha('user', 'password')
+            minute = m.get_minute('1')
+
+            assert minute is None
+
+
+class TestGetMinutes:
+    def test_gets_minutes(self):
+        with mock.patch('requests.get') as get:
+            for length in [0, 1, 3]:
+                get.return_value = make_some_minutes(length)
+
+                m = Manoderecha('user', 'password')
+                minutes = m.get_minutes(xrange(1, length + 1))
+
+                assert len(minutes) == length
+                assert [m['id'] for m in minutes] == range(1, length + 1)
