@@ -196,7 +196,7 @@ def get_minutes(git_log, md):
 
 
 def configure_argparser():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=u"Generate a changelog e-mail whenever you deploy")
     parser.add_argument('jenkins_url', help=u"Jenkins server URL")
     parser.add_argument('job_name', help=u"Jenkins job name")
     parser.add_argument('project_url', help=u"project's URL")
