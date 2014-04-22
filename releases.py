@@ -201,23 +201,20 @@ def configure_argparser():
     parser.add_argument('job_name', help=u"Jenkins job name")
     parser.add_argument('project_url', help=u"project's URL")
 
-    parser.add_argument('--manoderecha_user', help='manoderecha user for task fetching')
-    parser.add_argument('--manoderecha_password', help='manoderecha password for task fetching')
+    parser.add_argument('--manoderecha-user',
+                        default=os.environ.get('MANODERECHA_USER'),
+                        help=u"manoderecha user for task fetching. Can be set as environment variable")
+    parser.add_argument('--manoderecha-password',
+                        default=os.environ.get('MANODERECHA_PASSWORD'),
+                        help=u"manoderecha password for task fetching. Can be set as environment variable")
 
     return parser
-
-
-def patch(config):
-    config.manoderecha_user = config.manoderecha_user or os.environ['MANODERECHA_USER']
-    config.manoderecha_password = config.manoderecha_password or os.environ['MANODERECHA_PASSWORD']
 
 
 def run():
     # Configuration
     parser = configure_argparser()
     config = parser.parse_args()
-
-    patch(config)
 
     # Simple HTML mail template
     TEMPLATE_FILE = os.path.join(
