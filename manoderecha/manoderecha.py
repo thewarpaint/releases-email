@@ -20,13 +20,16 @@ class Manoderecha(object):
             r = getattr(requests, method)(API_BASE + url, data, auth=self.auth)
         else:
             r = getattr(requests, method)(API_BASE + url, auth=self.auth)
-        if r.status_code != 404:
+
+        if r.status_code == 401:
+            raise ManoderechaError("Authentication error")
+        elif r.status_code == 404:
+            return (404, None)
+        else:
             try:
                 return (r.status_code, json.loads(r.content))
             except ValueError:
                 raise ManoderechaError("Invalid JSON from API")
-        else:
-            return (404, None)
 
     def get_task(self, task_id):
         return self.call('tasks/' + task_id)[1]

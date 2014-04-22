@@ -63,7 +63,15 @@ class TestCall:
 
     def test_non_json_response_raises_error(self):
         with mock.patch('requests.get') as get:
-            get.return_value = mock.Mock(content="Invalid JSON")
+            get.return_value = mock.Mock(status_code=200, content="Not JSON")
+
+            with pytest.raises(ManoderechaError):
+                m = Manoderecha('user', 'password')
+                m.call('some-url')
+
+    def test_unauthorized_request_raises_error(self):
+        with mock.patch('requests.get') as get:
+            get.return_value = mock.Mock(status_code=401)
 
             with pytest.raises(ManoderechaError):
                 m = Manoderecha('user', 'password')
