@@ -27,7 +27,7 @@ def a_minute():
 
 
 def make_some_tasks(length):
-    envelope = u"%s" if length==1 else u"[%s]"
+    envelope = u"%s" if length == 1 else u"[%s]"
     tasks_json = envelope % ",".join(
         make_task_json(id) for id in xrange(1, length + 1))
     return mock.Mock(content=tasks_json, status_code=200 if length > 0 else 404)
@@ -42,7 +42,7 @@ def make_some_minutes(length):
 
 class TestAuth:
     def test_sets_header_correctly(self):
-        request = mock.Mock(headers = {})
+        request = mock.Mock(headers={})
         auth = ManoderechaAuth('jair', 'j41r')
         auth(request)
 

@@ -13,6 +13,7 @@ from jenkinsapi.custom_exceptions import NoBuildData
 from gitlabels import get_labels, remove_labels
 from manoderecha.manoderecha import Manoderecha
 
+
 def basic_release_info(project_url):
     """
     Returns basic information for this release of the project.
@@ -97,12 +98,13 @@ def tokenize_git_log(raw_log):
     tokenized = [l.split(u"}") for l in raw_log.strip().split(u"\n") if l]
 
     return [
-            {'hash': entry[0],
+        {
+            'hash': entry[0],
             'message': entry[1],
             'author_name': entry[2],
             'author_email': entry[3],
-            'author_gravatar': gravatar_hash(entry[3])}
-        for entry in tokenized
+            'author_gravatar': gravatar_hash(entry[3])
+        } for entry in tokenized
         if not entry[1].startswith('Merge')]
 
 
@@ -218,7 +220,8 @@ def run():
     patch(config)
 
     # Simple HTML mail template
-    TEMPLATE_FILE = os.path.join(dirname(realpath(__file__)), 'mail-template.html')
+    TEMPLATE_FILE = os.path.join(
+        dirname(realpath(__file__)), 'mail-template.html')
     with open(TEMPLATE_FILE, 'r') as f:
         tpl = f.read().decode('utf-8')
 
