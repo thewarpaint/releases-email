@@ -4,7 +4,8 @@ from jenkinsapi.custom_exceptions import NoBuildData
 
 from releases import (
     basic_release_info, gravatar_hash, get_last_good_revision,
-    get_raw_git_log, tokenize_git_log, parse_labels, remove_ignored,
+    get_raw_git_log, tokenize_git_log, parse_labels,
+    remove_ignored, links_to_commits,
     get_contributors, get_tasks, get_minutes)
 
 
@@ -143,6 +144,28 @@ class TestRemoveIgnored:
             {'labels': {'some': 'tag', 'another': ''}}]
         filtered_log = remove_ignored(parsed_log, ignore_tags=[])
         assert filtered_log == parsed_log
+
+
+class TestLinksToCommits:
+    def test_it__sets_url_for_supported_servers(self):
+        servers = [
+            {
+                'repo_urls': ['git@github.com:vinco/repo.git',
+                              'git://github.com/vinco/repo.git',
+                              'https://github.com/vinco/repo.git'],
+                'commit_url': 'http://github.com/vinco/repo/commit/abcde123'
+            },
+            {
+                'repo_urls': ['git@cincoovnis.com:repo.git'],
+                'commit_url': 'http://gitweb.cincoovnis.com/?p=repo.git;a=commit;h=abcde123'
+            },
+        ]
+        parsed_log = [{'hash': 'abcde123'}]
+
+        for server in servers:
+            for repo_url in server['repo_urls']:
+                anotated_log = links_to_commits(parsed_log, repo_url)
+                assert anotated_log[0]['commit_url'] == server['commit_url']
 
 
 class TestGetContributors:

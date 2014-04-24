@@ -69,7 +69,7 @@
                 <td width="50" style="padding:10px 0 10px 0; border-bottom: 1px solid #DADADA;">
                   <img style="border:1px solid #cccccc; border-radius:50%;" src="http://www.gravatar.com/avatar/{{ author_gravatar }}?s=40" alt="{{ author_name }}" title="{{ author_name }}">
                 </td>
-                <td width="75" style="border-bottom: 1px solid #DADADA;"><code>[{{ hash }}]</code></td>
+                <td width="75" style="border-bottom: 1px solid #DADADA;">{{#commit_url}}<a href="{{ . }}">{{/commit_url}}<code>[{{ hash }}]</code>{{#commit_url}}</a>{{/commit_url}}</td>
                 <td width="540" style="border-bottom: 1px solid #DADADA;padding-left:10px">
                   {{ message }}
                   {{#pretty_labels}}<span style="background-color:#e9e2e2;border-radius:3px;padding:3px;font-size:80%;margin-left:5px;">{{.}}</span>{{/pretty_labels}}

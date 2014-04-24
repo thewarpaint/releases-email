@@ -5,6 +5,7 @@ import subprocess
 from datetime import datetime
 from os.path import dirname, realpath
 from urlparse import urlparse
+import re
 
 import pystache
 from jenkinsapi.jenkins import Jenkins
@@ -146,6 +147,25 @@ def remove_ignored(git_log, ignore_tags):
         lambda l: len(set(l['labels'].keys()) & set(ignore_tags)) == 0, git_log)
 
 
+def links_to_commits(git_log, git_url):
+    exp = re.compile(r'(?:https://|git@|git://)([\.\w]+)[:/](.+).git')
+    server_to_url = {
+        'github.com': 'http://github.com/{repo}/commit/{commit}',
+        'cincoovnis.com': 'http://gitweb.cincoovnis.com/?p={repo}.git;a=commit;h={commit}',
+    }
+    server, repo = exp.match(git_url).groups()
+
+    if server not in server_to_url:
+        return git_log
+    else:
+        pattern = server_to_url[server]
+
+    for entry in git_log:
+        entry['commit_url'] = pattern.format(repo=repo, commit=entry['hash'])
+
+    return git_log
+
+
 def get_contributors(git_log):
     """
     Gets a list of contributors from the git log information.
@@ -219,6 +239,9 @@ def configure_argparser():
     parser.add_argument('--ignore-tags', nargs='+',
                         help=u"List of tags to ignore. Commit messages that include those tags will be eliminated from the changelog")
 
+    parser.add_argument('--git-url',
+                        help=u"Git url for the project. Depending on the server, can be used to link to commits.")
+
     parser.add_argument('--manoderecha-user',
                         default=os.environ.get('MANODERECHA_USER'),
                         help=u"manoderecha user for task fetching. Can be set as environment variable")
@@ -248,6 +271,8 @@ def run():
     raw_log = get_raw_git_log(since)
     with_parsed_labels = parse_labels(tokenize_git_log(raw_log))
     git_log = remove_ignored(with_parsed_labels, config.ignore_tags or [])
+    if config.git_url:
+        git_log = links_to_commits(git_log, config.git_url)
 
     release_data['git_log'] = git_log
 
