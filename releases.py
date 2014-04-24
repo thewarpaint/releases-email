@@ -250,9 +250,9 @@ def configure_argparser():
     parser.add_argument('job_name', help=u"Jenkins job name")
     parser.add_argument('project_url', help=u"project's URL")
 
-    parser.add_argument('--git-repo', default='.', help=u"Path to the git repo")
+    parser.add_argument('--git-repo', default='.', help=u"path to the git repo")
     parser.add_argument('--ignore-tags', nargs='+',
-                        help=u"List of tags to ignore. Commit messages that include those tags will be eliminated from the changelog")
+                        help=u"list of tags to ignore. Commit messages that include those tags will be eliminated from the changelog")
     parser.add_argument('--git-url',
                         help=u"Git url for the project. Depending on the server, can be used to link to commits.")
 
