@@ -148,6 +148,16 @@ def remove_ignored(git_log, ignore_tags):
 
 
 def links_to_commits(git_log, git_url):
+    """
+    Adds links to commits on supported web services.
+
+    Args:
+        git_log: A git log labeled by parse_labels
+        git_url: Git remote url
+
+    Returns:
+        The same git log with entries tagged with a 'commit_url' field.
+    """
     exp = re.compile(r'(?:https://|git@|git://)([\.\w]+)[:/](.+).git')
     server_to_url = {
         'github.com': 'http://github.com/{repo}/commit/{commit}',
