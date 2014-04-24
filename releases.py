@@ -66,7 +66,7 @@ def get_last_good_revision(jenkins_url, job_name):
         return None
 
 
-def get_raw_git_log(since):
+def get_raw_git_log(since, git_repo=None):
     """
     Calls git log since the specified identifier (or the initial commit) and
     returns its output.
@@ -81,7 +81,11 @@ def get_raw_git_log(since):
     git_log_command = ['git', 'log', '--pretty=%h}%s}%an}%ae']
     if since:
         git_log_command.append('%s..' % since)
-    return subprocess.check_output(git_log_command).decode('utf-8')
+
+    kwargs = {}
+    if git_repo:
+        kwargs['cwd'] = git_repo
+    return subprocess.check_output(git_log_command, **kwargs).decode('utf-8')
 
 
 def tokenize_git_log(raw_log):
@@ -246,9 +250,9 @@ def configure_argparser():
     parser.add_argument('job_name', help=u"Jenkins job name")
     parser.add_argument('project_url', help=u"project's URL")
 
+    parser.add_argument('--git-repo', default='.', help=u"Path to the git repo")
     parser.add_argument('--ignore-tags', nargs='+',
                         help=u"List of tags to ignore. Commit messages that include those tags will be eliminated from the changelog")
-
     parser.add_argument('--git-url',
                         help=u"Git url for the project. Depending on the server, can be used to link to commits.")
 
@@ -278,7 +282,7 @@ def run():
 
     # Changelog
     since = get_last_good_revision(config.jenkins_url, config.job_name)
-    raw_log = get_raw_git_log(since)
+    raw_log = get_raw_git_log(since, config.git_repo)
     with_parsed_labels = parse_labels(tokenize_git_log(raw_log))
     git_log = remove_ignored(with_parsed_labels, config.ignore_tags or [])
     if config.git_url:
