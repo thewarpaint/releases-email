@@ -20,7 +20,7 @@ release information.
     $ py.test test
     ```
 
-4. Or run the program (inside a git repo):
+4. Or run the program. Inside a git repo:
 
     ```
     $ export MANODERECHA_USER=<your manoderecha user>
