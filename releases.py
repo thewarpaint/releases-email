@@ -131,6 +131,21 @@ def parse_labels(git_log):
     return git_log
 
 
+def remove_ignored(git_log, ignore_tags):
+    """
+    Removes from the log commit messages with labels in ignore_tags.
+
+    Args:
+        git_log: A git log labeled by parse_labels
+        ignore_tags: A list of tags to ignore.
+
+    Returns:
+        The same git log without entries with tags in ignore_tags.
+    """
+    return filter(
+        lambda l: len(set(l['labels'].keys()) & set(ignore_tags)) == 0, git_log)
+
+
 def get_contributors(git_log):
     """
     Gets a list of contributors from the git log information.
@@ -201,6 +216,9 @@ def configure_argparser():
     parser.add_argument('job_name', help=u"Jenkins job name")
     parser.add_argument('project_url', help=u"project's URL")
 
+    parser.add_argument('--ignore-tags', nargs='+',
+                        help=u"List of tags to ignore. Commit messages that include those tags will be eliminated from the changelog")
+
     parser.add_argument('--manoderecha-user',
                         default=os.environ.get('MANODERECHA_USER'),
                         help=u"manoderecha user for task fetching. Can be set as environment variable")
@@ -228,7 +246,10 @@ def run():
     # Changelog
     since = get_last_good_revision(config.jenkins_url, config.job_name)
     raw_log = get_raw_git_log(since)
-    git_log = release_data['git_log'] = parse_labels(tokenize_git_log(raw_log))
+    with_parsed_labels = parse_labels(tokenize_git_log(raw_log))
+    git_log = remove_ignored(with_parsed_labels, config.ignore_tags or [])
+
+    release_data['git_log'] = git_log
 
     # Contributors
     release_data['contributors'] = get_contributors(git_log)

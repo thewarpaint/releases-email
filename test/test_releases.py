@@ -4,7 +4,7 @@ from jenkinsapi.custom_exceptions import NoBuildData
 
 from releases import (
     basic_release_info, gravatar_hash, get_last_good_revision,
-    get_raw_git_log, tokenize_git_log, parse_labels,
+    get_raw_git_log, tokenize_git_log, parse_labels, remove_ignored,
     get_contributors, get_tasks, get_minutes)
 
 
@@ -119,6 +119,30 @@ class TestParseLabels:
     def test_it_returns_empty_list_for_empty_log(self):
         parsed = parse_labels([])
         assert len(parsed) == 0
+
+
+class TestRemoveIgnored:
+    def test_it_removes_commits_with_ignored_label(self):
+        parsed_log = [
+            {'labels': {'-': ''}},
+            {'labels': {'some': 'tag', 'another': ''}}]
+        filtered_log = remove_ignored(parsed_log, ignore_tags=['-'])
+        assert len(filtered_log) == 1
+        assert 'some' in filtered_log[0]['labels']
+
+    def test_it_keeps_commits_without_ignored_label(self):
+        parsed_log = [
+            {'labels': {'x': ''}},
+            {'labels': {'some': 'tag', 'another': ''}}]
+        filtered_log = remove_ignored(parsed_log, ignore_tags=['-'])
+        assert filtered_log == parsed_log
+
+    def test_it_does_nothing_when_ignore_list_is_empty(self):
+        parsed_log = [
+            {'labels': {'-': ''}},
+            {'labels': {'some': 'tag', 'another': ''}}]
+        filtered_log = remove_ignored(parsed_log, ignore_tags=[])
+        assert filtered_log == parsed_log
 
 
 class TestGetContributors:
