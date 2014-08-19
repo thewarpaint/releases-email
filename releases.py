@@ -13,6 +13,7 @@ from jenkinsapi.custom_exceptions import NoBuildData
 
 from gitlabels import get_labels, remove_labels
 from manoderecha.manoderecha import Manoderecha
+from jira.jira import Jira
 
 
 def basic_release_info(project_url):
@@ -262,6 +263,16 @@ def configure_argparser():
     parser.add_argument('--manoderecha-password',
                         default=os.environ.get('MANODERECHA_PASSWORD'),
                         help=u"manoderecha password for task fetching. Can be set as environment variable")
+
+    parser.add_argument('--jira-api-base',
+                        default=os.environ.get('JIRA_API_BASE'),
+                        help=u"JIRA API base for issue fetching. Can be set as environment variable")
+    parser.add_argument('--jira-user',
+                        default=os.environ.get('JIRA_USER'),
+                        help=u"JIRA user for issue fetching. Can be set as environment variable")
+    parser.add_argument('--jira-password',
+                        default=os.environ.get('JIRA_PASSWORD'),
+                        help=u"JIRA password for issue fetching. Can be set as environment variable")
 
     return parser
 
