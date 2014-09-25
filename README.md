@@ -22,8 +22,10 @@ release information.
 
 4. Or run the program. Inside a git repo:
 
-    ```
-    $ export MANODERECHA_USER=<your manoderecha user>
-    $ export MANODERECHA_PASSWORD=<your manoderecha password>
+    ```bash
     $ ./release-email.py <Jenkins server URL> <Project's URL> <Jenkins job name>
     ```
+
+## Plugins
+
+Third-party plugins are [documented here](plugins.md).
