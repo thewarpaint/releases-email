@@ -9,7 +9,7 @@ release information.
 2. Create a virtualenv and install the dependencies:
 
     ```shell
-    $ virtualen env
+    $ virtualenv env
     $ source env/bin/activate
     $ pip install -r requirements/development.txt
     ```
