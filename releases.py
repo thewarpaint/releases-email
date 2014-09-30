@@ -256,6 +256,7 @@ def configure_argparser():
     parser.add_argument('--git-url',
                         help=u"Git url for the project. Depending on the server, can be used to link to commits.")
     parser.add_argument('--mail-template', default='mail-template.html', help=u"path to the mail template")
+    parser.add_argument('--since', default=None, help=u"reference to override last successful Jenkins job.")
 
     parser.add_argument('--manoderecha-user',
                         default=os.environ.get('MANODERECHA_USER'),
@@ -282,7 +283,10 @@ def run():
     release_data = basic_release_info(config.project_url)
 
     # Changelog
-    since = get_last_good_revision(config.jenkins_url, config.job_name)
+    if config.since is None:
+        since = get_last_good_revision(config.jenkins_url, config.job_name)
+    else:
+        since = config.since
     raw_log = get_raw_git_log(since, config.git_repo)
     with_parsed_labels = parse_labels(tokenize_git_log(raw_log))
     git_log = remove_ignored(with_parsed_labels, config.ignore_tags or [])
