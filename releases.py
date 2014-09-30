@@ -255,6 +255,7 @@ def configure_argparser():
                         help=u"list of tags to ignore. Commit messages that include those tags will be eliminated from the changelog")
     parser.add_argument('--git-url',
                         help=u"Git url for the project. Depending on the server, can be used to link to commits.")
+    parser.add_argument('--mail-template', default='mail-template.html', help=u"path to the mail template")
 
     parser.add_argument('--manoderecha-user',
                         default=os.environ.get('MANODERECHA_USER'),
@@ -273,7 +274,7 @@ def run():
 
     # Simple HTML mail template
     TEMPLATE_FILE = os.path.join(
-        dirname(realpath(__file__)), 'mail-template.html')
+        dirname(realpath(__file__)), config.mail_template)
     with open(TEMPLATE_FILE, 'r') as f:
         tpl = f.read().decode('utf-8')
 
